@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F172A"
+    android:background="#161D28"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -20,21 +20,31 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/tv_logo"
+            android:id="@+id/text_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HELP FAST"
+            android:layout_marginStart="128dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center_horizontal"
+            android:text="HELP\nFAST"
             android:textColor="@android:color/white"
-            android:textSize="28sp"
-            android:textStyle="bold" />
+            android:textSize="36sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/ic_check"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="8dp"
-            android:contentDescription="Logo ícone"
-            android:src="@drawable/ic_check" />
+            android:id="@+id/image_check"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="108dp"
+            android:background="@drawable/background_circle_dark"
+            android:src="@drawable/ic_check_circle"
+            app:layout_constraintBottom_toBottomOf="@id/text_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_logo"
+            app:layout_constraintVertical_bias="0.465"
+            app:tint="@android:color/white" />
 
     </LinearLayout>
 

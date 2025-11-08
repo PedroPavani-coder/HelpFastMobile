@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#161D28"
+    tools:context=".NovoTecnicoActivity">
+
+    <TextView
+        android:id="@+id/text_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center_horizontal"
+        android:text="HELP\nFAST"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/image_check"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="128dp"
+        android:background="@drawable/background_circle_dark"
+        android:src="@drawable/ic_check_circle"
+        app:layout_constraintBottom_toBottomOf="@id/text_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_logo"
+        app:layout_constraintVertical_bias="0.604"
+        app:tint="@android:color/white" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="#1C2937"
+        android:padding="24dp"
+        app:layout_constraintTop_toBottomOf="@id/text_logo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/text_titulo_tecnico"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Novo Técnico"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="32dp" />
+
+        <TextView
+            android:id="@+id/label_nome_tecnico"
+            style="@style/LabelStyle"
+            android:text="Nome do Técnico:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_titulo_tecnico"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/edit_nome_tecnico"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:hint="Digite o nome:"
+            android:inputType="textCapWords"
+            android:textColor="#020000"
+            android:textColorHint="#020000"
+            android:background="#FFFF"
+            android:paddingHorizontal="16dp"
+            android:textSize="16sp"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_nome_tecnico"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/label_email_tecnico"
+            style="@style/LabelStyle"
+            android:text="E-mail do Técnico:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_nome_tecnico"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/edit_email_tecnico"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:hint="Digite o e-mail:"
+            android:inputType="textEmailAddress"
+            android:textColor="#020000"
+            android:textColorHint="#020000"
+            android:background="#FFFF"
+            android:paddingHorizontal="16dp"
+            android:textSize="16sp"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_email_tecnico"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:id="@+id/label_telefone_tecnico"
+            style="@style/LabelStyle"
+            android:text="Telefone do Técnico:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_email_tecnico"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp" />
+
+        <EditText
+            android:id="@+id/edit_telefone_tecnico"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:hint="Digite o telefone:"
+            android:inputType="phone"
+            android:textColor="#020000"
+            android:textColorHint="#020000"
+            android:background="#FFFF"
+            android:paddingHorizontal="16dp"
+            android:textSize="16sp"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_telefone_tecnico" />
+
+
+        <Button
+            android:id="@+id/button_cancelar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:textSize="18sp"
+            android:paddingVertical="12dp"
+            android:backgroundTint="@android:color/white"
+            android:textColor="#191932"
+            app:cornerRadius="8dp"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/button_salvar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Salvar"
+            android:textSize="18sp"
+            android:paddingVertical="12dp"
+            android:backgroundTint="@android:color/white"
+            android:textColor="#191932"
+            app:cornerRadius="8dp"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/guideline_center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="8dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

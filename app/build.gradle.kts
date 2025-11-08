@@ -4,14 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.helpfastmobile"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.helpfastmobile"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -34,10 +32,25 @@ android {
 }
 
 dependencies {
+    // --- Dependências Básicas ---
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // --- Dependências do Room (SQLite) ---
+    implementation("androidx.room:room-runtime:2.6.1")
+    add("annotationProcessor", "androidx.room:room-compiler:2.6.1")
+
+    // --- Dependências do Retrofit (API REST) ---
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // --- Dependências para ViewModel e LiveData ---
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.6.1")
+
+    // --- Dependências de Teste ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F172A"
+    android:background="#161D28"
     android:padding="24dp"
     tools:context=".LoginActivity">
 
@@ -21,21 +21,31 @@
         android:layout_marginTop="60dp">
 
         <TextView
-            android:id="@+id/tv_logo"
+            android:id="@+id/text_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HELP FAST"
+            android:layout_marginStart="148dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center_horizontal"
+            android:text="HELP\nFAST"
             android:textColor="@android:color/white"
+            android:textSize="36sp"
             android:textStyle="bold"
-            android:textSize="28sp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/ic_check"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_check"
-            android:contentDescription="Logo ícone" />
+            android:id="@+id/image_check"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="108dp"
+            android:background="@drawable/background_circle_dark"
+            android:src="@drawable/ic_check_circle"
+            app:layout_constraintBottom_toBottomOf="@id/text_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_logo"
+            app:layout_constraintVertical_bias="0.465"
+            app:tint="@android:color/white" />
 
     </LinearLayout>
 
@@ -47,8 +57,8 @@
         app:cardCornerRadius="16dp"
         app:cardElevation="4dp"
         app:strokeWidth="1dp"
-        app:strokeColor="#1E293B"
-        android:backgroundTint="#1E293B"
+        app:strokeColor="#1C2937"
+        android:backgroundTint="#1C2937"
         app:layout_constraintTop_toBottomOf="@id/logo_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,12 +75,12 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="      E-mail"
+                android:hint= "Digite seu e-mail"
                 app:startIconDrawable="@drawable/ic_mail"
                 app:startIconTint="@android:color/white"
                 android:layout_marginTop="8dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxBackgroundColor="#334155">
+                app:boxBackgroundColor="#2E3A47">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_email"
@@ -84,13 +94,12 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="      Senha"
+                android:hint="Digite sua senha"
                 app:startIconDrawable="@drawable/ic_lock"
                 app:startIconTint="@android:color/white"
-                app:endIconMode="password_toggle"
                 android:layout_marginTop="12dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:boxBackgroundColor="#334155">
+                app:boxBackgroundColor="#2E3A47">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_password"

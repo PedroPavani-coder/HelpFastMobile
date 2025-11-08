@@ -1,133 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F172A"
-    android:padding="24dp"
-    tools:context=".LoginActivity">
+    android:background="#161D28"
+    android:paddingHorizontal="32dp"
+    tools:context=".CadastroActivity">
 
-    <!-- Logo HELP FAST -->
-    <LinearLayout
-        android:id="@+id/logo_container"
+    <!-- Aqui esta o logo do app -->
+    <TextView
+        android:id="@+id/text_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="104dp"
+        android:layout_marginTop="60dp"
+        android:gravity="center_horizontal"
+        android:text="HELP\nFAST"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Aqui esta o icone de check que faz parte do logo-->
+    <ImageView
+        android:id="@+id/image_check"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="92dp"
+        android:background="@drawable/background_circle_dark"
+        android:src="@drawable/ic_check_circle"
+        app:layout_constraintBottom_toBottomOf="@id/text_logo"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="60dp">
+        app:layout_constraintTop_toTopOf="@id/text_logo"
+        app:layout_constraintVertical_bias="0.465"
+        app:tint="@android:color/white" />
 
-        <TextView
-            android:id="@+id/tv_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="HELP FAST"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:textSize="28sp" />
-
-        <ImageView
-            android:id="@+id/ic_check"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_check"
-            android:contentDescription="Logo ícone" />
-
-    </LinearLayout>
-
-    <!-- Card central com os campos -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card_login"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:strokeWidth="1dp"
-        app:strokeColor="#1E293B"
-        android:backgroundTint="#1E293B"
-        app:layout_constraintTop_toBottomOf="@id/logo_container"
+    <!---->
+    <ScrollView
+        android:id="@+id/scroll_view_form"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/text_logo"
+        app:layout_constraintBottom_toTopOf="@id/button_cadastrar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/login_buttons"
-        android:layout_marginTop="60dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
-            android:layout_width="349dp"
-            android:layout_height="350dp"
-            android:orientation="vertical"
-            android:padding="24dp">
-
-            <!-- Campo E-mail -->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="      E-mail"
-                app:boxBackgroundColor="#334155"
-                app:startIconDrawable="@drawable/ic_mail"
-                app:startIconTint="@android:color/white">
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Campo Senha -->
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="      Senha"
-                app:boxBackgroundColor="#334155"
-                app:endIconMode="password_toggle"
-                app:startIconDrawable="@drawable/ic_lock"
-                app:startIconTint="@android:color/white">
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="      Senha"
-                app:boxBackgroundColor="#334155"
-                app:endIconMode="password_toggle"
-                app:startIconDrawable="@drawable/ic_lock"
-                app:startIconTint="@android:color/white">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:textColor="@android:color/white" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Botões -->
-    <LinearLayout
-        android:id="@+id/login_buttons"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="40dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cadastrar"
-            android:textColor="#0F172A"
-            android:backgroundTint="@android:color/white"
-            app:cornerRadius="12dp" />
-    </LinearLayout>
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/LabelStyle"
+                    android:text="Nome Completo"
+                    android:layout_marginBottom="8dp" />
+                <EditText
+                    android:id="@+id/edit_nome"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    style="@style/CustomInputStyle"
+                    android:hint="Digite seu nome completo"
+                    android:inputType="textPersonName"
+                    android:drawableEnd="@drawable/ic_person" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/LabelStyle"
+                    android:text="E-mail"
+                    android:layout_marginBottom="8dp" />
+                <EditText
+                    android:id="@+id/edit_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    style="@style/CustomInputStyle"
+                    android:hint="Digite seu e-mail"
+                    android:inputType="textEmailAddress"
+                    android:drawableEnd="@drawable/ic_mail" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/LabelStyle"
+                    android:text="Telefone"
+                    android:layout_marginBottom="8dp" />
+                <EditText
+                    android:id="@+id/edit_telefone"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    style="@style/CustomInputStyle"
+                    android:hint="Digite seu telefone"
+                    android:inputType="phone"
+                    android:drawableEnd="@drawable/ic_phone" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/LabelStyle"
+                    android:text="Senha"
+                    android:layout_marginBottom="8dp" />
+                <EditText
+                    android:id="@+id/edit_senha"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    style="@style/CustomInputStyle"
+                    android:hint="Digite sua senha"
+                    android:inputType="textPassword"
+                    android:drawableEnd="@drawable/ic_lock" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/LabelStyle"
+                    android:text="Confirmar Senha"
+                    android:layout_marginBottom="8dp" />
+                <EditText
+                    android:id="@+id/edit_confirmar_senha"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    style="@style/CustomInputStyle"
+                    android:hint="Confirme sua senha"
+                    android:inputType="textPassword"
+                    android:drawableEnd="@drawable/ic_lock" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <Button
+        android:id="@+id/button_cadastrar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cadastrar"
+        android:textSize="18sp"
+        android:paddingVertical="12dp"
+        android:backgroundTint="#CCCCCC"
+        android:textColor="#191932"
+        app:layout_constraintWidth_percent="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/text_ou"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:id="@+id/text_ou"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OU"
+        android:textColor="#CCCCCC"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/button_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/button_login"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:textSize="18sp"
+        android:paddingVertical="12dp"
+        android:backgroundTint="#CCCCCC"
+        android:textColor="#191932"
+        app:layout_constraintWidth_percent="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="40dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

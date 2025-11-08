@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#161D28"
+    android:paddingHorizontal="24dp"
+    tools:context=".NovoChamadoActivity">
+
+
+
+    <TextView
+        android:id="@+id/text_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="116dp"
+        android:layout_marginTop="60dp"
+        android:gravity="center_horizontal"
+        android:text="HELP\nFAST"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/image_check"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/background_circle_dark"
+        android:src="@drawable/ic_check_circle"
+        app:layout_constraintBottom_toBottomOf="@id/text_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/text_logo"
+        app:layout_constraintVertical_bias="0.511"
+        app:tint="@android:color/white" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/label_assunto"
+        style="@style/LabelStyle"
+        android:text="Assunto do chamado:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_logo"
+        android:layout_marginTop="48dp" />
+
+    <EditText
+        android:id="@+id/edit_assunto"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:hint="Escreva o assunto aqui:"
+        android:inputType="textCapSentences"
+        android:textColor="#191932"
+        android:textColorHint="#000000"
+        android:background="@drawable/background_edittext_light"
+        android:paddingHorizontal="16dp"
+        android:textSize="16sp"
+        android:maxLines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_assunto"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/label_motivo"
+        style="@style/LabelStyle"
+        android:text="Motivo:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_assunto"
+        android:layout_marginTop="24dp" />
+
+    <EditText
+        android:id="@+id/edit_motivo"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:hint="Escreva o motivo aqui:"
+        android:inputType="textMultiLine"
+        android:gravity="top|start"
+        android:textColor="#191932"
+        android:textColorHint="#000000"
+        android:background="@drawable/background_edittext_light"
+        android:padding="16dp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_motivo"
+        android:layout_marginTop="8dp" />
+    <Button
+        android:id="@+id/button_voltar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Voltar ao menu"
+        android:textSize="18sp"
+        android:paddingVertical="12dp"
+        android:backgroundTint="#CCCCCC"
+        android:textColor="#191932"
+        app:cornerRadius="8dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="8dp" />
+
+    <Button
+        android:id="@+id/button_abrir"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Abrir chamado"
+        android:textSize="18sp"
+        android:paddingVertical="12dp"
+        android:backgroundTint="#CCCCCC"
+        android:textColor="#191932"
+        app:cornerRadius="8dp"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@+id/guideline_center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="40dp"
+        android:layout_marginStart="8dp" />
+
+    <androidx.constraintlayout.widget.Group android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

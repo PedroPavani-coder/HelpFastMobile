@@ -12,17 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HelpFastMobile">
         <activity
-            android:name=".MenuUsuario"
+            android:name=".Tela_Chat_Admin"
             android:exported="false" />
         <activity
-            android:name=".Cadastro"
+            android:name=".Tela_Chat_Cliente"
             android:exported="false" />
         <activity
-            android:name=".Register"
-            android:exported="false" />
-        <activity
-            android:name=".Login"
-            android:exported="false" />
+            android:name=".Tela_Chamado_Tecnico"
+            android:exported="false" /> <!-- Activity de Splash Screen (ponto de entrada) -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -31,7 +28,34 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity> <!-- Activities principais do app -->
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CadastroActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MenuUsuarioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MeusChamadosActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NovoChamadoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChatChamadoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FinalizacaoChamadoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NovoTecnicoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TelaFaqActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
