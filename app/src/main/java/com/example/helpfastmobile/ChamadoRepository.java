@@ -1,17 +1,15 @@
 package com.example.helpfastmobile;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
+import android.util.Log;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// Repositório para gerenciar as operações de dados relacionadas a Chamados.
 public class ChamadoRepository {
 
+    private static final String N8N_WEBHOOK_URL = "https://n8n.grupoopt.com.br/webhook/b4d0df62-cdc5-45ca-b874-4acb613408fb";
+    private static final String TAG = "HelpFastDebug";
     private static volatile ChamadoRepository instance;
     private final ApiService apiService;
 
@@ -19,40 +17,163 @@ public class ChamadoRepository {
         apiService = ApiClient.getClient().create(ApiService.class);
     }
 
-    // Padrão Singleton para garantir uma única instância do repositório
     public static ChamadoRepository getInstance() {
         if (instance == null) {
-            instance = new ChamadoRepository();
+            synchronized (ChamadoRepository.class) {
+                if (instance == null) {
+                    instance = new ChamadoRepository();
+                }
+            }
         }
         return instance;
     }
 
-    // Método para buscar a lista de chamados da API
-    public LiveData<List<Chamado>> getChamados(String authToken) {
-        final MutableLiveData<List<Chamado>> data = new MutableLiveData<>();
+    // --- n8n Integration ---
+    public void sendQuestionToN8n(String question, DataSourceCallback<Void> callback) {
+        N8nPayload payload = new N8nPayload(question);
+        apiService.sendToN8n(N8N_WEBHOOK_URL, payload).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSucesso(null);
+                } else {
+                    String errorMsg = "Falha ao enviar para o n8n. Código: " + response.code();
+                    Log.e(TAG, errorMsg);
+                    callback.onErro(errorMsg);
+                }
+            }
 
-        // Adiciona o prefixo "Bearer " ao token, que é o padrão de autenticação JWT.
-        String header = "Bearer " + authToken;
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e(TAG, "Erro de conexão com o n8n: " + t.getMessage());
+                callback.onErro("Erro de conexão com o n8n: " + t.getMessage());
+            }
+        });
+    }
 
-        // Chama o endpoint da API de forma assíncrona
-        apiService.getChamados(header).enqueue(new Callback<List<Chamado>>() {
+    public void getTodosChamados(DataSourceCallback<List<Chamado>> callback) {
+        apiService.getTodosChamados().enqueue(new Callback<List<Chamado>>() {
             @Override
             public void onResponse(Call<List<Chamado>> call, Response<List<Chamado>> response) {
-                if (response.isSuccessful()) {
-                    data.setValue(response.body());
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSucesso(response.body());
                 } else {
-                    // Em caso de erro (ex: token inválido), postamos uma lista nula
-                    data.setValue(null);
+                    callback.onErro("Falha ao buscar todos os chamados.");
                 }
             }
 
             @Override
             public void onFailure(Call<List<Chamado>> call, Throwable t) {
-                // Em caso de falha de rede, também postamos nulo
-                data.setValue(null);
+                callback.onErro("Falha na conexão: " + t.getMessage());
             }
         });
+    }
 
-        return data;
+    public void getMeusChamados(int clienteId, DataSourceCallback<List<Chamado>> callback) {
+        apiService.getMeusChamados(clienteId).enqueue(new Callback<List<Chamado>>() {
+            @Override
+            public void onResponse(Call<List<Chamado>> call, Response<List<Chamado>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSucesso(response.body());
+                } else {
+                    callback.onErro("Falha ao buscar meus chamados.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Chamado>> call, Throwable t) {
+                callback.onErro("Falha na conexão: " + t.getMessage());
+            }
+        });
+    }
+
+    public void getChamadoDetails(int chamadoId, DataSourceCallback<Chamado> callback) {
+        apiService.getChamadoDetails(chamadoId).enqueue(new Callback<Chamado>() {
+            @Override
+            public void onResponse(Call<Chamado> call, Response<Chamado> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSucesso(response.body());
+                } else {
+                    callback.onErro("Falha ao buscar detalhes do chamado.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Chamado> call, Throwable t) {
+                callback.onErro("Falha na conexão: " + t.getMessage());
+            }
+        });
+    }
+
+    public void abrirChamado(int clienteId, String motivo, DataSourceCallback<Void> callback) {
+        apiService.abrirChamado(new AbrirChamadoDto(clienteId, motivo)).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSucesso(null);
+                } else {
+                    callback.onErro("Falha ao abrir chamado.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onErro("Falha na conexão: " + t.getMessage());
+            }
+        });
+    }
+
+    public void updateStatusChamado(int chamadoId, String novoStatus, Integer tecnicoId, DataSourceCallback<Void> callback) {
+        apiService.updateStatusChamado(chamadoId, new UpdateStatusDto(novoStatus, tecnicoId)).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSucesso(null);
+                } else {
+                    callback.onErro("Falha ao atualizar status.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onErro("Falha na conexão: " + t.getMessage());
+            }
+        });
+    }
+
+    public void getChat(int chamadoId, DataSourceCallback<List<Chat>> callback) {
+        apiService.getChat(chamadoId).enqueue(new Callback<List<Chat>>() {
+            @Override
+            public void onResponse(Call<List<Chat>> call, Response<List<Chat>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSucesso(response.body());
+                } else {
+                    callback.onErro("Falha ao buscar chat.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Chat>> call, Throwable t) {
+                callback.onErro("Falha na conexão: " + t.getMessage());
+            }
+        });
+    }
+
+    public void createChat(CreateChatDto createChatDto, DataSourceCallback<Chat> callback) {
+        apiService.createChat(createChatDto).enqueue(new Callback<Chat>() {
+            @Override
+            public void onResponse(Call<Chat> call, Response<Chat> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSucesso(response.body());
+                } else {
+                    callback.onErro("Falha ao criar chat.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Chat> call, Throwable t) {
+                callback.onErro("Falha na conexão: " + t.getMessage());
+            }
+        });
     }
 }

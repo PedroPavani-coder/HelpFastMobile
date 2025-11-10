@@ -1,28 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
+    android:layout_marginBottom="8dp"
     android:background="@drawable/background_button_white"
-    android:layout_marginBottom="8dp">
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/tv_chamado_id_assunto"
+        android:id="@+id/tv_chamado_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ID: #123 - Assunto do Chamado"
         android:textColor="@android:color/black"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="ID: #123" />
+
+    <TextView
+        android:id="@+id/tv_chamado_assunto"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/actions_container"
+        app:layout_constraintStart_toEndOf="@+id/tv_chamado_id"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Assunto do Chamado Muito Longo Para Caber" />
 
     <TextView
         android:id="@+id/tv_chamado_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status: Em Aberto"
+        android:layout_marginTop="4dp"
         android:textColor="#555555"
         android:textSize="14sp"
-        android:layout_marginTop="4dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_chamado_id"
+        tools:text="Status: Em Aberto" />
 
-</LinearLayout>
+    <!-- Container para os botões de ação -->
+    <LinearLayout
+        android:id="@+id/actions_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageButton
+            android:id="@+id/iv_cancelar_chamado"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_cancel" 
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:tint="#000000" />
+        
+        <ImageButton
+            android:id="@+id/iv_concluir_chamado"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_check" 
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginStart="8dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            app:tint="#000000" />
+
+        <ImageButton
+            android:id="@+id/iv_view_details"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_eye"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginStart="8dp"
+            app:tint="#000000" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

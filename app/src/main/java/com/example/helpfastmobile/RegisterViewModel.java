@@ -1,27 +1,45 @@
 package com.example.helpfastmobile;
 
+import android.util.Log;
+
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-// A ViewModel para a tela de Cadastro.
 public class RegisterViewModel extends ViewModel {
 
-    private UserRepository userRepository;
-    private LiveData<User> registerResponseLiveData;
+    private static final String TAG = "HelpFastDebug";
+    private final UserRepository userRepository;
+    private final MutableLiveData<User> registrationResult = new MutableLiveData<>();
+    private final MutableLiveData<String> registrationError = new MutableLiveData<>();
+
 
     public RegisterViewModel() {
-        // Obtém a instância do nosso repositório
         userRepository = UserRepository.getInstance();
     }
 
-    // Método que a Activity chamará para iniciar o processo de cadastro.
-    public void register(String nome, String email, String senha, String telefone) {
-        // O resultado da chamada ao repositório é atribuído ao nosso LiveData.
-        registerResponseLiveData = userRepository.register(nome, email, senha, telefone);
+    public LiveData<User> getRegistrationResult() {
+        return registrationResult;
     }
 
-    // Getter para que a Activity possa obter e observar o LiveData.
-    public LiveData<User> getRegisterResponseLiveData() {
-        return registerResponseLiveData;
+    public LiveData<String> getRegistrationError() {
+        return registrationError;
+    }
+
+    public void registerUser(String nome, String email, String senha, String telefone, int cargoId) {
+        Log.d(TAG, "ViewModel: registerUser chamado com Cargo ID: " + cargoId);
+        userRepository.register(nome, email, senha, telefone, cargoId, new DataSourceCallback<User>() {
+            @Override
+            public void onSucesso(User data) {
+                registrationResult.postValue(data);
+            }
+
+            @Override
+            public void onErro(String errorMessage) {
+                registrationError.postValue(errorMessage);
+            }
+        });
     }
 }

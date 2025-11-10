@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissões de Rede -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -10,52 +14,35 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.HelpFastMobile">
-        <activity
-            android:name=".Tela_Chat_Admin"
-            android:exported="false" />
-        <activity
-            android:name=".Tela_Chat_Cliente"
-            android:exported="false" />
-        <activity
-            android:name=".Tela_Chamado_Tecnico"
-            android:exported="false" /> <!-- Activity de Splash Screen (ponto de entrada) -->
+        android:theme="@style/Theme.HelpFastMobile"
+        android:usesCleartextTraffic="true">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Activities principais do app -->
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CadastroActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MenuUsuarioActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MeusChamadosActivity"
-            android:exported="false" />
-        <activity
-            android:name=".NovoChamadoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ChatChamadoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".FinalizacaoChamadoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".NovoTecnicoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".TelaFaqActivity"
-            android:exported="false" />
+        </activity>
+
+        <activity android:name=".LoginActivity" android:exported="false" />
+        <activity android:name=".CadastroActivity" android:exported="false" />
+        <activity android:name=".MenuUsuarioActivity" android:exported="false" />
+        <activity android:name=".MeusChamadosActivity" android:exported="false" />
+        <activity android:name=".NovoChamadoActivity" android:exported="false" />
+        <activity android:name=".ChatChamadoActivity" android:exported="false" />
+        <activity android:name=".FinalizacaoChamadoActivity" android:exported="false" />
+        <activity android:name=".NovoTecnicoActivity" android:exported="false" />
+        <activity android:name=".TelaFaqActivity" android:exported="false" />
+        
+        <!-- NOVO: Activity de Gerenciamento adicionada -->
+        <activity android:name=".GerenciarUsuariosActivity" android:exported="false" />
+
+        <activity android:name=".Tela_Chat_Admin" android:exported="false" />
+        <activity android:name=".Tela_Chat_Cliente" android:exported="false" />
+        <activity android:name=".Tela_Chamado_Tecnico" android:exported="false" />
+
     </application>
 
 </manifest>

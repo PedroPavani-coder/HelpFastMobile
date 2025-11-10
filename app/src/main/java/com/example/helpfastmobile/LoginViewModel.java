@@ -1,29 +1,40 @@
 package com.example.helpfastmobile;
 
+import android.util.Log;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-// A ViewModel serve como uma ponte entre o Repositório (dados) e a View (tela).
-// Ela sobrevive a mudanças de configuração, como a rotação da tela.
 public class LoginViewModel extends ViewModel {
 
-    private UserRepository userRepository;
-    private LiveData<LoginResponse> loginResponseLiveData;
+    private static final String TAG = "HelpFastDebug";
+    private final UserRepository userRepository;
+    private final MutableLiveData<User> loginResult = new MutableLiveData<>();
+    private final MutableLiveData<String> loginError = new MutableLiveData<>();
 
     public LoginViewModel() {
-        // Obtém a instância do nosso repositório
-        userRepository = UserRepository.getInstance();
+        this.userRepository = UserRepository.getInstance();
     }
 
-    // Método que a Activity chamará para iniciar o processo de login.
+    public LiveData<User> getLoginResult() {
+        return loginResult;
+    }
+
+    public LiveData<String> getLoginError() {
+        return loginError;
+    }
+
     public void login(String email, String password) {
-        // O resultado da chamada ao repositório é atribuído ao nosso LiveData.
-        // A Activity estará observando este LiveData para qualquer mudança.
-        loginResponseLiveData = userRepository.login(email, password);
-    }
+        userRepository.login(email, password, new DataSourceCallback<User>() {
+            @Override
+            public void onSucesso(User data) {
+                loginResult.postValue(data);
+            }
 
-    // Getter para que a Activity possa obter e observar o LiveData.
-    public LiveData<LoginResponse> getLoginResponseLiveData() {
-        return loginResponseLiveData;
+            @Override
+            public void onErro(String errorMessage) {
+                loginError.postValue(errorMessage);
+            }
+        });
     }
 }

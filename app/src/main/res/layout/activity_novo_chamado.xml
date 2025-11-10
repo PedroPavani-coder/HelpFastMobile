@@ -9,8 +9,6 @@
     android:paddingHorizontal="24dp"
     tools:context=".NovoChamadoActivity">
 
-
-
     <TextView
         android:id="@+id/text_logo"
         android:layout_width="wrap_content"
@@ -131,8 +129,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="40dp"
         android:layout_marginStart="8dp" />
-
-    <androidx.constraintlayout.widget.Group android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

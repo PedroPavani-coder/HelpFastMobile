@@ -8,20 +8,15 @@
     android:background="#161D28"
     tools:context=".MenuUsuarioActivity">
 
-
     <Button
         android:id="@+id/button_sair"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="4dp"
-        android:background="@drawable/background_button_sair"
-        app:backgroundTint="@null"
-        android:fontFamily="sans-serif"
         android:text="Sair"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,77 +24,133 @@
         android:id="@+id/text_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="148dp"
         android:layout_marginTop="44dp"
         android:gravity="center_horizontal"
         android:text="HELP\nFAST"
         android:textColor="@android:color/white"
         android:textSize="36sp"
         android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/image_check"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="108dp"
-        android:background="@drawable/background_circle_dark"
+        android:layout_marginStart="8dp"
         android:src="@drawable/ic_check_circle"
         app:layout_constraintBottom_toBottomOf="@id/text_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/text_logo"
-        app:layout_constraintVertical_bias="0.465"
+        app:layout_constraintStart_toEndOf="@id/text_logo"
         app:tint="@android:color/white" />
-
 
     <TextView
         android:id="@+id/text_boas_vindas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
         android:gravity="center"
-        android:text="Olá cliente X"
         android:textColor="@android:color/white"
         android:textSize="32sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.411" />
+        app:layout_constraintTop_toBottomOf="@id/text_logo"
+        tools:text="Olá, Usuário X" />
 
-    <Button
-        android:id="@+id/button_novo_chamado"
+    <!-- Container para todos os menus -->
+    <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Solicitar novo\nChamado"
-        android:textSize="18sp"
-        android:textColor="#191932"
-        android:paddingVertical="16dp"
-        android:backgroundTint="#CCCCCC"
-        android:letterSpacing="0"
+        android:layout_height="0dp"
         app:layout_constraintWidth_percent="0.75"
-        app:layout_constraintBottom_toTopOf="@+id/button_meus_chamados"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_boas_vindas"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:layout_marginBottom="32dp" />
-
-    <Button
-        android:id="@+id/button_meus_chamados"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Meus Chamados"
-        android:textSize="18sp"
-        android:textColor="#191932"
-        android:paddingVertical="16dp"
-        android:backgroundTint="#CCCCCC"
-        app:layout_constraintWidth_percent="0.75"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_novo_chamado"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Menu do Cliente -->
+        <LinearLayout
+            android:id="@+id/menu_cliente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <Button
+                android:id="@+id/button_novo_chamado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:text="Solicitar Chamado"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/button_meus_chamados"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#FFFFFF"
+                android:text="Meus Chamados"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+        <!-- Menu do Técnico -->
+        <LinearLayout
+            android:id="@+id/menu_tecnico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <Button
+                android:id="@+id/button_consultar_chamados"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:text="Consultar Chamados"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+        <!-- Menu do Admin -->
+        <LinearLayout
+            android:id="@+id/menu_admin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <Button
+                android:id="@+id/button_visualizar_chamados"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFFFFF"
+                android:text="Visualizar Chamados"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/button_gerenciar_usuarios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#FFFFFF"
+                android:text="Gerenciar Clientes e Técnicos"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/button_extrair_relatorios"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#FFFFFF"
+                android:text="Extrair Relatórios"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

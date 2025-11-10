@@ -1,36 +1,27 @@
 package com.example.helpfastmobile;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
 import com.google.gson.annotations.SerializedName;
+import java.util.Date; // Date ainda pode ser usado para o getter, se necessário, mas o campo será String
 
-// Esta classe agora serve como modelo para o Room (banco de dados) e para o Retrofit (API).
-
-@Entity(tableName = "chamados")
 public class Chamado {
 
-    // --- Anotações para Room e Gson (API) ---
-    @PrimaryKey(autoGenerate = true)
-    @SerializedName("id") // Nome do campo no JSON da API
+    @SerializedName("id")
     private int id;
 
-    @ColumnInfo(name = "assunto") // Nome da coluna no banco de dados
-    @SerializedName("assunto")    // Nome do campo no JSON da API
-    private String assunto;
+    @SerializedName("tecnicoId")
+    private Integer tecnicoId;
 
-    @ColumnInfo(name = "descricao")
-    @SerializedName("descricao")
-    private String descricao;
+    @SerializedName("motivo")
+    private String motivo;
 
-    @ColumnInfo(name = "status")
     @SerializedName("status")
     private String status;
 
-    // --- Getters e Setters ---
-    // Necessários para ambas as bibliotecas
+    // CORREÇÃO: Alterado para String para evitar erros de parsing de data
+    @SerializedName("dataAbertura")
+    private String dataAbertura;
 
+    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -39,20 +30,20 @@ public class Chamado {
         this.id = id;
     }
 
-    public String getAssunto() {
-        return assunto;
+    public Integer getTecnicoId() {
+        return tecnicoId;
     }
 
-    public void setAssunto(String assunto) {
-        this.assunto = assunto;
+    public void setTecnicoId(Integer tecnicoId) {
+        this.tecnicoId = tecnicoId;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getMotivo() {
+        return motivo;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
     }
 
     public String getStatus() {
@@ -61,5 +52,13 @@ public class Chamado {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDataAbertura() {
+        return dataAbertura;
+    }
+
+    public void setDataAbertura(String dataAbertura) {
+        this.dataAbertura = dataAbertura;
     }
 }

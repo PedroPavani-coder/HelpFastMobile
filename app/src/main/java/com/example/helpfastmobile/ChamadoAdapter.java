@@ -3,62 +3,91 @@ package com.example.helpfastmobile;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 import java.util.List;
 
-// O Adapter é o responsável por conectar os dados (a lista de chamados) 
-// com a RecyclerView, gerenciando a criação e a reciclagem das views.
 public class ChamadoAdapter extends RecyclerView.Adapter<ChamadoAdapter.ChamadoViewHolder> {
 
-    // Lista que armazena os dados a serem exibidos
-    private List<Chamado> chamados = new ArrayList<>();
+    private final List<Chamado> chamados = new ArrayList<>();
+    private final int cargoId;
+    private final OnChamadoInteractionListener listener;
 
-    // Este método é chamado quando a RecyclerView precisa de uma nova view.
-    // Ele infla (cria) o layout do item a partir do XML.
+    public interface OnChamadoInteractionListener {
+        void onVisualizarClick(Chamado chamado);
+        void onConcluirClick(Chamado chamado);
+        void onCancelarClick(Chamado chamado);
+    }
+
+    public ChamadoAdapter(int cargoId, OnChamadoInteractionListener listener) {
+        this.cargoId = cargoId;
+        this.listener = listener;
+    }
+
     @NonNull
     @Override
     public ChamadoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_chamado, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chamado, parent, false);
         return new ChamadoViewHolder(itemView);
     }
 
-    // Este método é chamado para exibir os dados em uma posição específica.
-    // Ele pega os dados do chamado e os coloca nas views do ViewHolder.
     @Override
     public void onBindViewHolder(@NonNull ChamadoViewHolder holder, int position) {
-        Chamado currentChamado = chamados.get(position);
-        holder.tvChamadoIdAssunto.setText("ID: #" + currentChamado.getId() + " - " + currentChamado.getAssunto());
-        holder.tvChamadoStatus.setText("Status: " + currentChamado.getStatus());
+        Chamado chamado = chamados.get(position);
+        holder.tvProtocolo.setText("ID: #" + chamado.getId());
+        holder.tvAssunto.setText(chamado.getMotivo());
+
+        String status = chamado.getStatus();
+        holder.tvStatus.setText("Status: " + (status != null ? status : "N/A"));
+
+        // --- LÓGICA DE VISIBILIDADE DOS BOTÕES ---
+
+        // O botão Visualizar está sempre ativo
+        holder.btnVisualizar.setOnClickListener(v -> listener.onVisualizarClick(chamado));
+
+        boolean isActionable = status != null && status.equalsIgnoreCase("Aberto");
+        boolean isTecnicoOrAdmin = (cargoId == 1 || cargoId == 2);
+
+        if (isTecnicoOrAdmin && isActionable) {
+            holder.btnConcluir.setVisibility(View.VISIBLE);
+            holder.btnCancelar.setVisibility(View.VISIBLE);
+            holder.btnConcluir.setOnClickListener(v -> listener.onConcluirClick(chamado));
+            holder.btnCancelar.setOnClickListener(v -> listener.onCancelarClick(chamado));
+        } else {
+            holder.btnConcluir.setVisibility(View.GONE);
+            holder.btnCancelar.setVisibility(View.GONE);
+        }
     }
 
-    // Retorna o número total de itens na lista.
     @Override
     public int getItemCount() {
         return chamados.size();
     }
 
-    // Método para atualizar a lista de chamados no adapter.
-    public void setChamados(List<Chamado> chamados) {
-        this.chamados = chamados;
-        notifyDataSetChanged(); // Notifica a RecyclerView que os dados mudaram.
+    public void setChamados(List<Chamado> novosChamados) {
+        this.chamados.clear();
+        if (novosChamados != null) {
+            this.chamados.addAll(novosChamados);
+        }
+        notifyDataSetChanged();
     }
 
-    // A classe ViewHolder descreve a view de um item e seus metadados.
-    // Ela "segura" as referências para as views de cada item (evita findViewById repetidos).
-    class ChamadoViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvChamadoIdAssunto;
-        private final TextView tvChamadoStatus;
+    static class ChamadoViewHolder extends RecyclerView.ViewHolder {
+        TextView tvProtocolo, tvAssunto, tvStatus;
+        ImageButton btnVisualizar, btnConcluir, btnCancelar;
 
         public ChamadoViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvChamadoIdAssunto = itemView.findViewById(R.id.tv_chamado_id_assunto);
-            tvChamadoStatus = itemView.findViewById(R.id.tv_chamado_status);
+            // CORREÇÃO: Usando os IDs corretos do XML
+            tvProtocolo = itemView.findViewById(R.id.tv_chamado_id);
+            tvAssunto = itemView.findViewById(R.id.tv_chamado_assunto);
+            tvStatus = itemView.findViewById(R.id.tv_chamado_status);
+            btnVisualizar = itemView.findViewById(R.id.iv_view_details);
+            btnConcluir = itemView.findViewById(R.id.iv_concluir_chamado);
+            btnCancelar = itemView.findViewById(R.id.iv_cancelar_chamado);
         }
     }
 }

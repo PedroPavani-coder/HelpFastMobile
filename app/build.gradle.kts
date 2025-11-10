@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.helpfastmobile"
-    compileSdk = 36
+    compileSdk = 36 // CORRIGIDO: Revertido para 36, conforme exigido pela dependência
 
     defaultConfig {
         applicationId = "com.example.helpfastmobile"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 34 // targetSdk pode ser diferente de compileSdk
         versionCode = 1
         versionName = "1.0"
 
@@ -45,6 +45,7 @@ dependencies {
     // --- Dependências do Retrofit (API REST) ---
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 
     // --- Dependências para ViewModel e LiveData ---
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.1")

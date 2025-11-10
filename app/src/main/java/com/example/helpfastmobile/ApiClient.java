@@ -1,26 +1,36 @@
 package com.example.helpfastmobile;
 
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-// Esta classe é responsável por criar e gerenciar a instância do Retrofit.
-// Usamos o padrão Singleton para garantir que haja apenas uma instância para todo o app.
 public class ApiClient {
 
-    // IMPORTANTE: Substitua pela URL base da sua API.
-    // Se você estiver testando com um servidor local no mesmo computador que o emulador,
-    // use http://10.0.2.2:PORTA/ em vez de http://localhost:PORTA/
-    private static final String BASE_URL = "http://10.0.2.2:8080/api/";
+    private static final String BASE_URL = "https://apihelpfast-csazhtadedc8h0gm.brazilsouth-01.azurewebsites.net/";
 
     private static Retrofit retrofit = null;
 
-    // Método público e estático para obter a instância do cliente Retrofit.
     public static Retrofit getClient() {
         if (retrofit == null) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            // NOVO: Aumenta o tempo de timeout para 30 segundos
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(logging)
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .writeTimeout(30, TimeUnit.SECONDS)
+                    .build();
+
             retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL) // Define a URL base para todas as requisições.
-                    .addConverterFactory(GsonConverterFactory.create()) // Adiciona o conversor Gson.
-                    .build(); // Constrói a instância do Retrofit.
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(client)
+                    .build();
         }
         return retrofit;
     }

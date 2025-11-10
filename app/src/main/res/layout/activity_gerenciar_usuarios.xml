@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#161D28"
+    android:padding="24dp"
+    tools:context=".GerenciarUsuariosActivity">
+
+    <!-- Título -->
+    <TextView
+        android:id="@+id/text_titulo_gerenciar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clientes e Técnicos"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Botão Voltar -->
+    <Button
+        android:id="@+id/button_voltar_menu"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Voltar ao menu"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#191932"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_cadastrar_tecnico"/>
+
+    <!-- Botão Cadastrar Técnico -->
+    <Button
+        android:id="@+id/button_cadastrar_tecnico"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Cadastrar Técnico"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#191932"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button_voltar_menu"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Lista de Usuários -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_usuarios"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/text_titulo_gerenciar"
+        app:layout_constraintBottom_toTopOf="@+id/button_voltar_menu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_usuario"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,27 +12,24 @@
         android:id="@+id/text_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="148dp"
         android:layout_marginTop="44dp"
         android:gravity="center_horizontal"
         android:text="HELP\nFAST"
         android:textColor="@android:color/white"
         android:textSize="36sp"
         android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/image_check"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="112dp"
-        android:background="@drawable/background_circle_dark"
+        android:layout_marginStart="8dp"
         android:src="@drawable/ic_check_circle"
         app:layout_constraintBottom_toBottomOf="@id/text_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/text_logo"
-        app:layout_constraintVertical_bias="0.534"
+        app:layout_constraintStart_toEndOf="@id/text_logo"
         app:tint="@android:color/white" />
 
     <androidx.constraintlayout.widget.ConstraintLayout

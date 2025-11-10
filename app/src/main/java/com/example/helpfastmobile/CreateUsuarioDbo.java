@@ -1,21 +1,25 @@
 package com.example.helpfastmobile;
 
-public class User {
-    private int id;
+import com.google.gson.annotations.SerializedName;
+
+public class CreateUsuarioDbo {
+
+    @SerializedName("nome")
     private String nome;
+
+    @SerializedName("email")
     private String email;
+
+    @SerializedName("senha")
+    private String senha;
+
+    @SerializedName("telefone")
     private String telefone;
-    private int cargoId;
+
+    @SerializedName("cargoId")
+    private Integer cargoId;
 
     // Getters and Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getNome() {
         return nome;
     }
@@ -32,6 +36,14 @@ public class User {
         this.email = email;
     }
 
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
     public String getTelefone() {
         return telefone;
     }
@@ -40,11 +52,11 @@ public class User {
         this.telefone = telefone;
     }
 
-    public int getCargoId() {
+    public Integer getCargoId() {
         return cargoId;
     }
 
-    public void setCargoId(int cargoId) {
+    public void setCargoId(Integer cargoId) {
         this.cargoId = cargoId;
     }
 }
