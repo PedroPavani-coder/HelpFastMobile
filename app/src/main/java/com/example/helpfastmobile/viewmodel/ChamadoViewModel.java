@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.helpfastmobile.data.model.Chamado;
 import com.example.helpfastmobile.data.model.Chat;
 import com.example.helpfastmobile.data.model.CreateChatDto;
+import com.example.helpfastmobile.data.model.DocumentAssistantResponse;
 import com.example.helpfastmobile.data.repository.ChamadoRepository;
 import com.example.helpfastmobile.data.repository.DataSourceCallback;
 
@@ -35,7 +36,7 @@ public class ChamadoViewModel extends ViewModel {
     private final MutableLiveData<String> createChatError = new MutableLiveData<>();
     private final MutableLiveData<Void> n8nSendSuccess = new MutableLiveData<>();
     private final MutableLiveData<String> n8nSendError = new MutableLiveData<>();
-    private final MutableLiveData<Void> documentAssistantSuccess = new MutableLiveData<>();
+    private final MutableLiveData<DocumentAssistantResponse> documentAssistantSuccess = new MutableLiveData<>();
     private final MutableLiveData<String> documentAssistantError = new MutableLiveData<>();
 
     public ChamadoViewModel() {
@@ -59,7 +60,7 @@ public class ChamadoViewModel extends ViewModel {
     public LiveData<String> getCreateChatError() { return createChatError; }
     public LiveData<Void> getN8nSendSuccess() { return n8nSendSuccess; }
     public LiveData<String> getN8nSendError() { return n8nSendError; }
-    public LiveData<Void> getDocumentAssistantSuccess() { return documentAssistantSuccess; }
+    public LiveData<DocumentAssistantResponse> getDocumentAssistantSuccess() { return documentAssistantSuccess; }
     public LiveData<String> getDocumentAssistantError() { return documentAssistantError; }
 
     // --- Métodos do Repositório ---
@@ -73,10 +74,10 @@ public class ChamadoViewModel extends ViewModel {
         });
     }
 
-    public void perguntarDocumentAssistant(String pergunta, Integer usuarioId) {
-        chamadoRepository.perguntarDocumentAssistant(pergunta, usuarioId, new DataSourceCallback<Void>() {
+    public void perguntarDocumentAssistant(String pergunta) {
+        chamadoRepository.perguntarDocumentAssistant(pergunta, new DataSourceCallback<DocumentAssistantResponse>() {
             @Override
-            public void onSucesso(Void data) { 
+            public void onSucesso(DocumentAssistantResponse data) { 
                 documentAssistantSuccess.postValue(data); 
             }
             @Override

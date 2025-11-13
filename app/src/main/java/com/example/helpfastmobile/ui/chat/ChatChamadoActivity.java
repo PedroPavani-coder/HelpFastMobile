@@ -112,12 +112,7 @@ public class ChatChamadoActivity extends AppCompatActivity {
                 // **CORREÇÃO**: Chama a IA e recarrega o chat DEPOIS que a mensagem foi salva
                 chamadoViewModel.getChat(chamadoId);
 
-                Integer usuarioId = sessionManager.getUserId();
-                if (usuarioId != -1) {
-                    chamadoViewModel.perguntarDocumentAssistant(chat.getMotivo(), usuarioId);
-                } else {
-                    Log.e(TAG, "Usuário não logado após salvar chat. Não é possível enviar pergunta para DocumentAssistant.");
-                }
+                chamadoViewModel.perguntarDocumentAssistant(chat.getMotivo());
             }
         });
 
@@ -131,9 +126,21 @@ public class ChatChamadoActivity extends AppCompatActivity {
             }
         });
 
-        chamadoViewModel.getDocumentAssistantSuccess().observe(this, aVoid -> {
-            Log.i(TAG, "Pergunta enviada para DocumentAssistant com sucesso! Recarregando chat para resposta.");
-            chamadoViewModel.getChat(chamadoId);
+        chamadoViewModel.getDocumentAssistantSuccess().observe(this, resposta -> {
+            if (resposta != null) {
+                Log.i(TAG, "Resposta recebida do DocumentAssistant. Resposta: " + resposta.getResposta() + 
+                      ", Escalar para humano: " + resposta.isEscalarParaHumano());
+                // A resposta já deve estar salva no backend e será exibida através do polling
+                // Recarrega o chat para exibir a resposta
+                chamadoViewModel.getChat(chamadoId);
+                
+                // Se precisar escalar para humano, exibe mensagem para o usuário
+                if (resposta.isEscalarParaHumano()) {
+                    Log.w(TAG, "A IA indicou que deve escalar para humano.");
+                    Toast.makeText(this, "Você será atendido pelo técnico, aguarde um instante.", 
+                                 Toast.LENGTH_LONG).show();
+                }
+            }
         });
 
         chamadoViewModel.getCreateChatError().observe(this, error -> {

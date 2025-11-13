@@ -6,6 +6,7 @@ import com.example.helpfastmobile.data.model.AbrirChamadoDto;
 import com.example.helpfastmobile.data.network.ApiClient;
 import com.example.helpfastmobile.data.network.ApiService;
 import com.example.helpfastmobile.data.model.DocumentQuestionRequest;
+import com.example.helpfastmobile.data.model.DocumentAssistantResponse;
 import com.example.helpfastmobile.data.model.N8nPayload;
 import com.example.helpfastmobile.data.model.UpdateStatusDto;
 import com.example.helpfastmobile.data.model.Chamado;
@@ -63,17 +64,17 @@ public class ChamadoRepository {
     }
 
     // --- DocumentAssistant Integration (OpenAI sincrono) ---
-    public void perguntarDocumentAssistant(String pergunta, Integer usuarioId, DataSourceCallback<Void> callback) {
+    public void perguntarDocumentAssistant(String pergunta, DataSourceCallback<DocumentAssistantResponse> callback) {
         DocumentQuestionRequest request = new DocumentQuestionRequest();
         request.setPergunta(pergunta);
-        request.setUsuarioId(usuarioId);
         
-        apiService.perguntarDocumentAssistant(request).enqueue(new Callback<Void>() {
+        apiService.perguntarDocumentAssistant(request).enqueue(new Callback<DocumentAssistantResponse>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "Pergunta enviada para DocumentAssistant com sucesso.");
-                    callback.onSucesso(null);
+            public void onResponse(Call<DocumentAssistantResponse> call, Response<DocumentAssistantResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    DocumentAssistantResponse resposta = response.body();
+                    Log.d(TAG, "Resposta recebida do DocumentAssistant. Escalar para humano: " + resposta.isEscalarParaHumano());
+                    callback.onSucesso(resposta);
                 } else {
                     String errorMsg = "Falha ao enviar pergunta para DocumentAssistant. Código: " + response.code();
                     Log.e(TAG, errorMsg);
@@ -82,7 +83,7 @@ public class ChamadoRepository {
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<DocumentAssistantResponse> call, Throwable t) {
                 Log.e(TAG, "Erro de conexão com DocumentAssistant: " + t.getMessage());
                 callback.onErro("Erro de conexão com DocumentAssistant: " + t.getMessage());
             }

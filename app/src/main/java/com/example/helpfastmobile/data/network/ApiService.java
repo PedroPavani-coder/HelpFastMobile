@@ -4,6 +4,7 @@ import com.example.helpfastmobile.data.model.AbrirChamadoDto;
 import com.example.helpfastmobile.data.model.ChatIaResult;
 import com.example.helpfastmobile.data.model.CreateUsuarioDbo;
 import com.example.helpfastmobile.data.model.DocumentQuestionRequest;
+import com.example.helpfastmobile.data.model.DocumentAssistantResponse;
 import com.example.helpfastmobile.data.model.Faq;
 import com.example.helpfastmobile.data.model.LoginDbo;
 import com.example.helpfastmobile.data.model.N8nPayload;
@@ -72,7 +73,7 @@ public interface ApiService {
     Call<ChatIaResult> getChatIaResult(@Path("id") int id);
 
     @POST("api/DocumentAssistant/perguntar")
-    Call<Void> perguntarDocumentAssistant(@Body DocumentQuestionRequest documentQuestionRequest);
+    Call<DocumentAssistantResponse> perguntarDocumentAssistant(@Body DocumentQuestionRequest documentQuestionRequest);
 
     @GET("api/Faqs")
     Call<List<Faq>> getFaqs();
