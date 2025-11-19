@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:gravity="end"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:gravity="end">
 
     <TextView
-        android:id="@+id/tv_mensagem_corpo"
+        android:id="@+id/tv_nome_remetente"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/bubble_right" 
-        android:textColor="@android:color/white"
+        android:layout_marginEnd="8dp"
+        android:textSize="12sp"
+        android:textColor="#888888"
+        tools:text="Você" />
+
+    <TextView
+        android:id="@+id/tv_texto_mensagem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/background_mensagem_enviada"
         android:padding="12dp"
-        android:maxWidth="260dp"
-        android:text="Esta é uma mensagem de exemplo enviada pelo usuário." />
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        tools:text="Esta é uma mensagem de exemplo que você enviou." />
 
 </LinearLayout>
