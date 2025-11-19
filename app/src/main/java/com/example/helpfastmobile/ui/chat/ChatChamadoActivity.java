@@ -1,10 +1,14 @@
 package com.example.helpfastmobile.ui.chat;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,34 +16,35 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.helpfastmobile.viewmodel.ChamadoViewModel;
 import com.example.helpfastmobile.R;
 import com.example.helpfastmobile.data.model.Chat;
 import com.example.helpfastmobile.data.model.CreateChatDto;
 import com.example.helpfastmobile.util.SessionManager;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.helpfastmobile.viewmodel.ChamadoViewModel;
 
 public class ChatChamadoActivity extends AppCompatActivity {
 
     public static final String EXTRA_CHAMADO_ID = "com.example.helpfastmobile.EXTRA_CHAMADO_ID";
     public static final String EXTRA_PREENCHER_MENSAGEM = "com.example.helpfastmobile.PREENCHER_MENSAGEM";
     private static final String TAG = "HelpFastDebug";
-    private static final int MAX_RESPOSTAS_IA = 3; // Máximo de 3 respostas da I.A.
+    private static final long POLLING_INTERVAL_MS = 10000; // 10 segundos
+    private static final int MAX_AI_RESPONSES = 3;
 
     private EditText editMensagem;
-    private ImageButton btnSend;
+    private ImageButton btnSend, btnCancelar, btnConcluir;
     private Button buttonVoltar;
     private RecyclerView recyclerViewMensagens;
+    private LinearLayout containerBotoesAcao;
 
     private ChamadoViewModel chamadoViewModel;
     private MensagemAdapter mensagemAdapter;
     private SessionManager sessionManager;
     private int chamadoId;
-    private List<Chat> mensagensLocais = new ArrayList<>();
-    private int contadorRespostasIa = 0; // Contador de respostas da I.A.
-    private boolean transferidoParaTecnico = false; // Flag para controlar transferência
+    private int aiMessageCount = 0; // Contador para as respostas da IA
+    private boolean isTransferred = false; // Flag para controlar se já foi transferido
+
+    private final Handler pollingHandler = new Handler(Looper.getMainLooper());
+    private Runnable pollingRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,195 +54,174 @@ public class ChatChamadoActivity extends AppCompatActivity {
         sessionManager = new SessionManager(getApplicationContext());
         chamadoViewModel = new ViewModelProvider(this).get(ChamadoViewModel.class);
 
-        editMensagem = findViewById(R.id.edit_mensagem);
-        btnSend = findViewById(R.id.btn_send);
-        buttonVoltar = findViewById(R.id.button_voltar);
-        recyclerViewMensagens = findViewById(R.id.recycler_view_mensagens);
+        bindViews();
 
         chamadoId = getIntent().getIntExtra(EXTRA_CHAMADO_ID, -1);
-
         if (chamadoId == -1) {
             Toast.makeText(this, "Erro: ID do chamado não fornecido.", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
-        String mensagemPreenchida = getIntent().getStringExtra(EXTRA_PREENCHER_MENSAGEM);
-        if (mensagemPreenchida != null && !mensagemPreenchida.trim().isEmpty()) {
-            editMensagem.setText(mensagemPreenchida);
-        }
-
         setupRecyclerView();
         setupObservers();
-        
-        // Se for técnico, carrega o histórico completo do chat
-        int cargoId = sessionManager.getCargoId();
-        if (cargoId == 2) { // É técnico (cargoId 2)
-            carregarHistoricoChat();
+        setupPolling();
+        setupActionButtons();
+
+        String mensagemPreenchida = getIntent().getStringExtra(EXTRA_PREENCHER_MENSAGEM);
+        if (mensagemPreenchida != null && !mensagemPreenchida.trim().isEmpty()) {
+            handlePrimeiraMensagem(mensagemPreenchida);
         }
 
         buttonVoltar.setOnClickListener(v -> finish());
         btnSend.setOnClickListener(v -> handleEnviarMensagem());
     }
-    
-    private void carregarHistoricoChat() {
-        chamadoViewModel.getChat(chamadoId);
-        chamadoViewModel.getChatResult().observe(this, chats -> {
-            if (chats != null && !chats.isEmpty()) {
-                mensagensLocais.clear();
-                mensagensLocais.addAll(chats);
-                mensagemAdapter.setMensagens(mensagensLocais);
-                if (mensagemAdapter.getItemCount() > 0) {
-                    recyclerViewMensagens.smoothScrollToPosition(mensagemAdapter.getItemCount() - 1);
-                }
-                
-                // Conta quantas respostas da I.A. já existem no histórico
-                for (Chat chat : chats) {
-                    if (chat.getUsuarioId() == null) { // Mensagens da I.A. têm usuarioId null
-                        contadorRespostasIa++;
-                    }
-                }
-            }
-        });
-        
-        chamadoViewModel.getChatError().observe(this, error -> {
-            if (error != null) {
-                Log.e(TAG, "Erro ao carregar histórico do chat: " + error);
-            }
-        });
+
+    private void bindViews() {
+        editMensagem = findViewById(R.id.edit_mensagem);
+        btnSend = findViewById(R.id.btn_send);
+        buttonVoltar = findViewById(R.id.button_voltar);
+        recyclerViewMensagens = findViewById(R.id.recycler_view_mensagens);
+        containerBotoesAcao = findViewById(R.id.container_botoes_acao);
+        btnCancelar = findViewById(R.id.btn_cancelar);
+        btnConcluir = findViewById(R.id.btn_concluir);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        pollingHandler.post(pollingRunnable);
+        Log.d(TAG, "Polling de chat iniciado.");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        pollingHandler.removeCallbacks(pollingRunnable);
+        Log.d(TAG, "Polling de chat pausado.");
+    }
 
     private void setupRecyclerView() {
-        int usuarioLogadoId = sessionManager.getUserId();
-        mensagemAdapter = new MensagemAdapter(usuarioLogadoId);
+        mensagemAdapter = new MensagemAdapter(sessionManager.getUserId());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         recyclerViewMensagens.setLayoutManager(layoutManager);
         recyclerViewMensagens.setAdapter(mensagemAdapter);
     }
 
-    private void adicionarMensagemAoChat(String texto, Integer usuarioId) {
-        Chat novaMensagem = new Chat();
-        novaMensagem.setMotivo(texto);
-        novaMensagem.setUsuarioId(usuarioId);
-        novaMensagem.setChamadoId(chamadoId);
-        mensagensLocais.add(novaMensagem);
-        mensagemAdapter.setMensagens(mensagensLocais);
-        if (mensagemAdapter.getItemCount() > 0) {
-            recyclerViewMensagens.smoothScrollToPosition(mensagemAdapter.getItemCount() - 1);
-        }
-        
-        // Salva a mensagem no servidor se for do cliente ou técnico
-        if (usuarioId != null) {
-            salvarMensagemNoServidor(texto, usuarioId);
-        }
-    }
-    
-    private void salvarMensagemNoServidor(String texto, Integer usuarioId) {
-        CreateChatDto createChatDto = new CreateChatDto();
-        createChatDto.setPergunta(texto);
-        chamadoViewModel.createChat(createChatDto);
+    private void setupPolling() {
+        pollingRunnable = () -> {
+            Log.d(TAG, "Verificando histórico de mensagens da API...");
+            chamadoViewModel.getChat(chamadoId);
+            pollingHandler.postDelayed(pollingRunnable, POLLING_INTERVAL_MS);
+        };
     }
 
     private void setupObservers() {
-        chamadoViewModel.getDocumentAssistantSuccess().observe(this, resposta -> {
-            if (resposta != null && !transferidoParaTecnico) {
-                Log.i(TAG, "Resposta recebida do DocumentAssistant. Resposta: " + resposta.getResposta() + 
-                      ", Escalar para humano: " + resposta.isEscalarParaHumano());
-                
-                // Incrementa o contador de respostas da I.A.
-                contadorRespostasIa++;
-                
-                // Adiciona a resposta da IA ao chat (sem usuarioId para aparecer como mensagem recebida)
-                adicionarMensagemIaAoChat(resposta.getResposta());
-                
-                // Verifica se deve transferir para técnico (3 respostas ou escalarParaHumano)
-                boolean deveTransferir = resposta.isEscalarParaHumano() || contadorRespostasIa >= MAX_RESPOSTAS_IA;
-                
-                if (deveTransferir && !transferidoParaTecnico) {
-                    transferidoParaTecnico = true;
-                    Log.w(TAG, "Transferindo chat para técnico. Respostas da I.A.: " + contadorRespostasIa);
-                    
-                    // Notifica o cliente sobre a transferência
-                    String mensagemTransferencia = "Você será atendido pelo técnico, aguarde um instante.";
-                    adicionarMensagemIaAoChat(mensagemTransferencia);
+        chamadoViewModel.getChatResult().observe(this, chatMessages -> {
+            if (chatMessages != null) {
+                Log.d(TAG, "Histórico da API recebido com " + chatMessages.size() + " mensagens.");
+                aiMessageCount = (int) chatMessages.stream().filter(m -> m.getUsuarioId() == null).count();
+                // CORREÇÃO: Usa getMensagem() para verificar a mensagem de transbordo
+                isTransferred = chatMessages.stream().anyMatch(m -> "Você será atendido por um técnico, aguarde um instante.".equals(m.getMensagem()));
+
+                mensagemAdapter.setMensagens(chatMessages);
+                if (mensagemAdapter.getItemCount() > 0) {
+                    recyclerViewMensagens.smoothScrollToPosition(mensagemAdapter.getItemCount() - 1);
                 }
             }
         });
 
-        chamadoViewModel.getDocumentAssistantError().observe(this, error -> {
-            if (error != null) {
-                Log.e(TAG, "Falha ao enviar pergunta para DocumentAssistant: " + error);
-                Toast.makeText(this, "Erro ao processar pergunta: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
-        
-        // Observadores para salvar mensagens no servidor
         chamadoViewModel.getCreateChatResult().observe(this, chat -> {
             if (chat != null) {
-                Log.d(TAG, "Mensagem salva no servidor com sucesso.");
+                Log.d(TAG, "Mensagem (ID: " + chat.getId() + ") foi salva na API. Atualizando histórico.");
+                chamadoViewModel.getChat(chamadoId);
             }
         });
-        
+
+        chamadoViewModel.getDocumentAssistantSuccess().observe(this, resposta -> {
+            if (resposta != null) {
+                Log.i(TAG, "Resposta recebida da IA: " + resposta.getResposta());
+                salvarMensagem(resposta.getResposta(), null);
+
+                if ((aiMessageCount + 1) >= MAX_AI_RESPONSES || resposta.isEscalarParaHumano()) {
+                    if (!isTransferred) {
+                         Log.w(TAG, "Limite da IA atingido ou transbordo solicitado. Avisando o cliente.");
+                        salvarMensagem("Você será atendido por um técnico, aguarde um instante.", null);
+                        isTransferred = true;
+                    }
+                }
+            }
+        });
+
+        chamadoViewModel.getUpdateStatusResult().observe(this, success -> {
+            Toast.makeText(this, "Status do chamado atualizado!", Toast.LENGTH_SHORT).show();
+            finish();
+        });
+
+        chamadoViewModel.getChatError().observe(this, error -> {
+            if (error != null) Toast.makeText(this, "Erro ao carregar chat: " + error, Toast.LENGTH_LONG).show();
+        });
         chamadoViewModel.getCreateChatError().observe(this, error -> {
-            if (error != null) {
-                Log.e(TAG, "Erro ao salvar mensagem no servidor: " + error);
-            }
+            if (error != null) Toast.makeText(this, "Falha ao salvar mensagem: " + error, Toast.LENGTH_SHORT).show();
+        });
+        chamadoViewModel.getDocumentAssistantError().observe(this, error -> {
+            if (error != null) Log.e(TAG, "Falha ao conectar com a IA: " + error);
+        });
+        chamadoViewModel.getUpdateStatusError().observe(this, error -> {
+            if (error != null) Toast.makeText(this, "Falha ao atualizar status: " + error, Toast.LENGTH_SHORT).show();
         });
     }
-    
-    private void adicionarMensagemIaAoChat(String texto) {
-        Chat novaMensagem = new Chat();
-        novaMensagem.setMotivo(texto);
-        novaMensagem.setUsuarioId(null); // null indica mensagem da I.A.
-        novaMensagem.setChamadoId(chamadoId);
-        mensagensLocais.add(novaMensagem);
-        mensagemAdapter.setMensagens(mensagensLocais);
-        if (mensagemAdapter.getItemCount() > 0) {
-            recyclerViewMensagens.smoothScrollToPosition(mensagemAdapter.getItemCount() - 1);
+
+    private void setupActionButtons() {
+        int cargoId = sessionManager.getCargoId();
+        if (cargoId == 1 || cargoId == 2) { // Admin ou Técnico
+            containerBotoesAcao.setVisibility(View.VISIBLE);
+            int tecnicoId = sessionManager.getUserId();
+            btnConcluir.setOnClickListener(v -> chamadoViewModel.updateStatusChamado(chamadoId, "Finalizado", tecnicoId));
+            btnCancelar.setOnClickListener(v -> chamadoViewModel.updateStatusChamado(chamadoId, "Cancelado", tecnicoId));
+        } else {
+            containerBotoesAcao.setVisibility(View.GONE);
         }
-        
-        // Salva a mensagem da I.A. no servidor
-        salvarMensagemIaNoServidor(texto);
     }
-    
-    private void salvarMensagemIaNoServidor(String texto) {
-        CreateChatDto createChatDto = new CreateChatDto();
-        createChatDto.setPergunta(texto);
-        chamadoViewModel.createChat(createChatDto);
+
+    private void handlePrimeiraMensagem(String texto) {
+        editMensagem.setText("");
+        salvarMensagem(texto, sessionManager.getUserId());
+
+        if (aiMessageCount < MAX_AI_RESPONSES && !isTransferred) {
+            Log.d(TAG, "Enviando primeira pergunta para a IA.");
+            chamadoViewModel.perguntarDocumentAssistant(texto, sessionManager.getUserId());
+        }
     }
 
     private void handleEnviarMensagem() {
-        String mensagem = editMensagem.getText().toString().trim();
-        if (mensagem.isEmpty()) {
-            return;
-        }
-        
-        // Se já foi transferido para técnico, não permite mais envio de mensagens para I.A.
-        if (transferidoParaTecnico) {
-            Toast.makeText(this, "O chat foi transferido para o técnico. Aguarde o atendimento.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        
-        // Se já atingiu o limite de 3 respostas da I.A., transfere para técnico
-        if (contadorRespostasIa >= MAX_RESPOSTAS_IA) {
-            if (!transferidoParaTecnico) {
-                transferidoParaTecnico = true;
-                String mensagemTransferencia = "Você será atendido pelo técnico, aguarde um instante.";
-                adicionarMensagemIaAoChat(mensagemTransferencia);
-            }
+        String textoMensagem = editMensagem.getText().toString().trim();
+        if (textoMensagem.isEmpty()) {
             return;
         }
 
-        // Adiciona a mensagem do usuário ao chat localmente
-        Integer usuarioId = sessionManager.getUserId();
-        adicionarMensagemAoChat(mensagem, usuarioId);
         editMensagem.setText("");
+        salvarMensagem(textoMensagem, sessionManager.getUserId());
 
-        // Envia para a IA através do endpoint api/DocumentAssistant/perguntar apenas se não foi transferido
-        if (!transferidoParaTecnico) {
-            chamadoViewModel.perguntarDocumentAssistant(mensagem);
+        boolean isCliente = sessionManager.getCargoId() == 3;
+        if (isCliente && aiMessageCount < MAX_AI_RESPONSES && !isTransferred) {
+            Log.d(TAG, "Cliente enviando pergunta para a IA. Contagem: " + aiMessageCount);
+            chamadoViewModel.perguntarDocumentAssistant(textoMensagem, sessionManager.getUserId());
+        } else if (isCliente) {
+            Log.w(TAG, "Limite de mensagens da IA atingido ou já transferido. Mensagem apenas salva no histórico.");
+        } else {
+            Log.d(TAG, "Mensagem de técnico/admin enviada. Apenas salvando no histórico.");
         }
+    }
+
+    private void salvarMensagem(String texto, Integer usuarioId) {
+        CreateChatDto createChatDto = new CreateChatDto();
+        createChatDto.setChamadoId(chamadoId);
+        createChatDto.setMotivo(texto); // O backend espera "motivo" para o texto da mensagem.
+        if (usuarioId != null) {
+            createChatDto.setUsuarioId(usuarioId);
+        }
+        chamadoViewModel.createChat(createChatDto);
     }
 }

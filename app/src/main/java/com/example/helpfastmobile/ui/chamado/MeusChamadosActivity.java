@@ -61,12 +61,13 @@ public class MeusChamadosActivity extends AppCompatActivity implements ChamadoAd
         chamadoViewModel.getTodosChamadosResult().observe(this, chamados -> {
             if (chamados != null) {
                 int cargoId = sessionManager.getCargoId();
-                if (cargoId == 2) { // É um Técnico, filtra por status "Aberto"
-                    Log.d(TAG, "Filtrando chamados com status 'Aberto' para o técnico.");
-                    List<Chamado> chamadosAbertos = chamados.stream()
-                            .filter(c -> c.getStatus() != null && c.getStatus().equalsIgnoreCase("Aberto"))
+                if (cargoId == 2) { // É um Técnico, filtra por status "Aberto" ou "Em Atendimento"
+                    Log.d(TAG, "Filtrando chamados ativos para o técnico.");
+                    List<Chamado> chamadosAtivos = chamados.stream()
+                            .filter(c -> c.getStatus() != null && 
+                                         (c.getStatus().equalsIgnoreCase("Aberto") || c.getStatus().equalsIgnoreCase("Em Atendimento")))
                             .collect(Collectors.toList());
-                    updateAdapter(chamadosAbertos);
+                    updateAdapter(chamadosAtivos);
                 } else { // É um Admin, mostra tudo
                     updateAdapter(chamados);
                 }

@@ -13,27 +13,14 @@ import com.example.helpfastmobile.data.repository.DataSourceCallback;
 
 import java.util.List;
 
-/**
- * ViewModel responsável por gerenciar os dados de Chamados e Chat, atuando como intermediário
- * entre a UI e a camada de dados (Repository).
- *
- * Ele lida com a lógica de negócio para buscar e atualizar os dados, e expõe essas informações
- * para as Activities através de LiveData, garantindo que a UI reaja às mudanças de forma eficiente.
- */
 public class ChamadoViewModel extends ViewModel {
 
     private final ChamadoRepository chamadoRepository;
 
-    // LiveData para a lista de TODOS os chamados (usado por Admin/Técnico).
     private final MutableLiveData<List<Chamado>> todosChamadosResult = new MutableLiveData<>();
     private final MutableLiveData<String> todosChamadosError = new MutableLiveData<>();
-
-    // LiveData para a lista de chamados de UM cliente específico.
     private final MutableLiveData<List<Chamado>> meusChamadosResult = new MutableLiveData<>();
     private final MutableLiveData<String> meusChamadosError = new MutableLiveData<>();
-
-    private final MutableLiveData<Chamado> chamadoDetailsResult = new MutableLiveData<>();
-    private final MutableLiveData<String> chamadoDetailsError = new MutableLiveData<>();
     private final MutableLiveData<Chamado> abrirChamadoResult = new MutableLiveData<>();
     private final MutableLiveData<String> abrirChamadoError = new MutableLiveData<>();
     private final MutableLiveData<Void> updateStatusResult = new MutableLiveData<>();
@@ -42,8 +29,6 @@ public class ChamadoViewModel extends ViewModel {
     private final MutableLiveData<String> chatError = new MutableLiveData<>();
     private final MutableLiveData<Chat> createChatResult = new MutableLiveData<>();
     private final MutableLiveData<String> createChatError = new MutableLiveData<>();
-    private final MutableLiveData<Void> n8nSendSuccess = new MutableLiveData<>();
-    private final MutableLiveData<String> n8nSendError = new MutableLiveData<>();
     private final MutableLiveData<DocumentAssistantResponse> documentAssistantSuccess = new MutableLiveData<>();
     private final MutableLiveData<String> documentAssistantError = new MutableLiveData<>();
 
@@ -51,13 +36,11 @@ public class ChamadoViewModel extends ViewModel {
         this.chamadoRepository = ChamadoRepository.getInstance();
     }
 
-    // Getters para os LiveData, permitindo que a UI os observe.
+    // Getters
     public LiveData<List<Chamado>> getTodosChamadosResult() { return todosChamadosResult; }
     public LiveData<String> getTodosChamadosError() { return todosChamadosError; }
     public LiveData<List<Chamado>> getMeusChamadosResult() { return meusChamadosResult; }
     public LiveData<String> getMeusChamadosError() { return meusChamadosError; }
-    public LiveData<Chamado> getChamadoDetailsResult() { return chamadoDetailsResult; }
-    public LiveData<String> getChamadoDetailsError() { return chamadoDetailsError; }
     public LiveData<Chamado> getAbrirChamadoResult() { return abrirChamadoResult; }
     public LiveData<String> getAbrirChamadoError() { return abrirChamadoError; }
     public LiveData<Void> getUpdateStatusResult() { return updateStatusResult; }
@@ -66,36 +49,24 @@ public class ChamadoViewModel extends ViewModel {
     public LiveData<String> getChatError() { return chatError; }
     public LiveData<Chat> getCreateChatResult() { return createChatResult; }
     public LiveData<String> getCreateChatError() { return createChatError; }
-    public LiveData<Void> getN8nSendSuccess() { return n8nSendSuccess; }
-    public LiveData<String> getN8nSendError() { return n8nSendError; }
     public LiveData<DocumentAssistantResponse> getDocumentAssistantSuccess() { return documentAssistantSuccess; }
     public LiveData<String> getDocumentAssistantError() { return documentAssistantError; }
 
-    // --- Métodos que delegam as chamadas para o Repositório ---
+    // --- Métodos do Repositório ---
 
-    public void sendQuestionToN8n(String question) {
-        chamadoRepository.sendQuestionToN8n(question, new DataSourceCallback<Void>() {
+    public void perguntarDocumentAssistant(String pergunta, Integer usuarioId) {
+        chamadoRepository.perguntarDocumentAssistant(pergunta, usuarioId, new DataSourceCallback<DocumentAssistantResponse>() {
             @Override
-            public void onSucesso(Void data) { n8nSendSuccess.postValue(data); }
-            @Override
-            public void onErro(String errorMessage) { n8nSendError.postValue(errorMessage); }
-        });
-    }
-
-    public void perguntarDocumentAssistant(String pergunta) {
-        chamadoRepository.perguntarDocumentAssistant(pergunta, new DataSourceCallback<DocumentAssistantResponse>() {
-            @Override
-            public void onSucesso(DocumentAssistantResponse data) { 
-                documentAssistantSuccess.postValue(data); 
+            public void onSucesso(DocumentAssistantResponse data) {
+                documentAssistantSuccess.postValue(data);
             }
             @Override
-            public void onErro(String errorMessage) { 
-                documentAssistantError.postValue(errorMessage); 
+            public void onErro(String errorMessage) {
+                documentAssistantError.postValue(errorMessage);
             }
         });
     }
 
-    /** Busca a lista de todos os chamados existentes. */
     public void getTodosChamados() {
         chamadoRepository.getTodosChamados(new DataSourceCallback<List<Chamado>>() {
             @Override
@@ -105,26 +76,12 @@ public class ChamadoViewModel extends ViewModel {
         });
     }
 
-    /** Busca a lista de chamados de um cliente específico. */
     public void getMeusChamados(int clienteId) {
         chamadoRepository.getMeusChamados(clienteId, new DataSourceCallback<List<Chamado>>() {
             @Override
-            public void onSucesso(List<Chamado> data) {
-                meusChamadosResult.postValue(data);
-            }
+            public void onSucesso(List<Chamado> data) { meusChamadosResult.postValue(data); }
             @Override
-            public void onErro(String errorMessage) {
-                meusChamadosError.postValue(errorMessage);
-            }
-        });
-    }
-
-    public void getChamadoDetails(int chamadoId) {
-        chamadoRepository.getChamadoDetails(chamadoId, new DataSourceCallback<Chamado>() {
-            @Override
-            public void onSucesso(Chamado data) { chamadoDetailsResult.postValue(data); }
-            @Override
-            public void onErro(String errorMessage) { chamadoDetailsError.postValue(errorMessage); }
+            public void onErro(String errorMessage) { meusChamadosError.postValue(errorMessage); }
         });
     }
 

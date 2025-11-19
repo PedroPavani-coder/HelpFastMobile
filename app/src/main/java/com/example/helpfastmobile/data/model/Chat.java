@@ -1,8 +1,11 @@
 package com.example.helpfastmobile.data.model;
 
 import com.google.gson.annotations.SerializedName;
-import java.util.Date;
 
+/**
+ * Modelo de dados para uma mensagem de Chat.
+ * Mapeia os campos retornados pela API para um objeto Java.
+ */
 public class Chat {
 
     @SerializedName("id")
@@ -11,18 +14,24 @@ public class Chat {
     @SerializedName("chamadoId")
     private Integer chamadoId;
 
-    // --- CAMPOS ADICIONADOS PARA UM CHAT FUNCIONAL ---
+    @SerializedName("mensagem")
+    private String mensagem;
 
-    @SerializedName(value="motivo", alternate={"texto", "mensagem"})
-    private String motivo; // O texto da mensagem
+    @SerializedName("remetenteId")
+    private Integer remetenteId;
 
-    @SerializedName("usuarioId")
-    private Integer usuarioId; // Quem enviou a mensagem
+    @SerializedName("destinatarioId")
+    private Integer destinatarioId;
 
-    @SerializedName(value="dataEnvio", alternate={"createdAt"})
-    private Date dataEnvio; // Quando foi enviada
+    @SerializedName("tipo")
+    private String tipo;
 
-    // Getters and Setters
+    // CORREÇÃO: O campo de data agora é uma String para evitar erros de parsing.
+    @SerializedName("dataEnvio")
+    private String dataEnvio;
+
+    // Getters e Setters
+
     public int getId() {
         return id;
     }
@@ -39,27 +48,53 @@ public class Chat {
         this.chamadoId = chamadoId;
     }
 
+    public String getMensagem() {
+        return mensagem;
+    }
+
+    public void setMensagem(String mensagem) {
+        this.mensagem = mensagem;
+    }
+
+    // Método adaptado para manter compatibilidade
     public String getMotivo() {
-        return motivo;
+        return mensagem;
     }
 
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
+    public Integer getRemetenteId() {
+        return remetenteId;
     }
 
+    public void setRemetenteId(Integer remetenteId) {
+        this.remetenteId = remetenteId;
+    }
+
+    // Método adaptado para manter compatibilidade
     public Integer getUsuarioId() {
-        return usuarioId;
+        return remetenteId;
     }
 
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
+    public Integer getDestinatarioId() {
+        return destinatarioId;
     }
 
-    public Date getDataEnvio() {
+    public void setDestinatarioId(Integer destinatarioId) {
+        this.destinatarioId = destinatarioId;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getDataEnvio() {
         return dataEnvio;
     }
 
-    public void setDataEnvio(Date dataEnvio) {
+    public void setDataEnvio(String dataEnvio) {
         this.dataEnvio = dataEnvio;
     }
 }

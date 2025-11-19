@@ -3,24 +3,26 @@ package com.example.helpfastmobile.data.repository;
 import android.util.Log;
 
 import com.example.helpfastmobile.data.model.AbrirChamadoDto;
-import com.example.helpfastmobile.data.network.ApiClient;
-import com.example.helpfastmobile.data.network.ApiService;
-import com.example.helpfastmobile.data.model.DocumentQuestionRequest;
-import com.example.helpfastmobile.data.model.DocumentAssistantResponse;
-import com.example.helpfastmobile.data.model.N8nPayload;
-import com.example.helpfastmobile.data.model.UpdateStatusDto;
 import com.example.helpfastmobile.data.model.Chamado;
 import com.example.helpfastmobile.data.model.Chat;
+import com.example.helpfastmobile.data.model.ChatApiResponse;
 import com.example.helpfastmobile.data.model.CreateChatDto;
+import com.example.helpfastmobile.data.model.DocumentAssistantResponse;
+import com.example.helpfastmobile.data.model.DocumentQuestionRequest;
+import com.example.helpfastmobile.data.model.N8nPayload;
+import com.example.helpfastmobile.data.model.UpdateStatusDto;
+import com.example.helpfastmobile.data.network.ApiClient;
+import com.example.helpfastmobile.data.network.ApiService;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ChamadoRepository {
 
-    private static final String N8N_WEBHOOK_URL = "https://n8n.grupoopt.com.br/webhook/b4d0df62-cdc5-45ca-b874-4acb613408fb";
     private static final String TAG = "HelpFastDebug";
     private static volatile ChamadoRepository instance;
     private final ApiService apiService;
@@ -40,52 +42,24 @@ public class ChamadoRepository {
         return instance;
     }
 
-    // --- n8n Integration ---
-    public void sendQuestionToN8n(String question, DataSourceCallback<Void> callback) {
-        N8nPayload payload = new N8nPayload(question);
-        apiService.sendToN8n(N8N_WEBHOOK_URL, payload).enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    callback.onSucesso(null);
-                } else {
-                    String errorMsg = "Falha ao enviar para o n8n. Código: " + response.code();
-                    Log.e(TAG, errorMsg);
-                    callback.onErro(errorMsg);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.e(TAG, "Erro de conexão com o n8n: " + t.getMessage());
-                callback.onErro("Erro de conexão com o n8n: " + t.getMessage());
-            }
-        });
-    }
-
-    // --- DocumentAssistant Integration (OpenAI sincrono) ---
-    public void perguntarDocumentAssistant(String pergunta, DataSourceCallback<DocumentAssistantResponse> callback) {
+    public void perguntarDocumentAssistant(String pergunta, Integer usuarioId, DataSourceCallback<DocumentAssistantResponse> callback) {
         DocumentQuestionRequest request = new DocumentQuestionRequest();
         request.setPergunta(pergunta);
-        
+        request.setUsuarioId(usuarioId);
+
         apiService.perguntarDocumentAssistant(request).enqueue(new Callback<DocumentAssistantResponse>() {
             @Override
             public void onResponse(Call<DocumentAssistantResponse> call, Response<DocumentAssistantResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    DocumentAssistantResponse resposta = response.body();
-                    Log.d(TAG, "Resposta recebida do DocumentAssistant. Escalar para humano: " + resposta.isEscalarParaHumano());
-                    callback.onSucesso(resposta);
+                    callback.onSucesso(response.body());
                 } else {
-                    String errorMsg = "Falha ao enviar pergunta para DocumentAssistant. Código: " + response.code();
-                    Log.e(TAG, errorMsg);
-                    callback.onErro(errorMsg);
+                    callback.onErro("Falha ao conectar com a IA.");
                 }
             }
 
             @Override
             public void onFailure(Call<DocumentAssistantResponse> call, Throwable t) {
-                Log.e(TAG, "Erro de conexão com DocumentAssistant: " + t.getMessage());
-                callback.onErro("Erro de conexão com DocumentAssistant: " + t.getMessage());
+                callback.onErro(t.getMessage());
             }
         });
     }
@@ -103,7 +77,7 @@ public class ChamadoRepository {
 
             @Override
             public void onFailure(Call<List<Chamado>> call, Throwable t) {
-                callback.onErro("Falha na conexão: " + t.getMessage());
+                callback.onErro(t.getMessage());
             }
         });
     }
@@ -121,25 +95,7 @@ public class ChamadoRepository {
 
             @Override
             public void onFailure(Call<List<Chamado>> call, Throwable t) {
-                callback.onErro("Falha na conexão: " + t.getMessage());
-            }
-        });
-    }
-
-    public void getChamadoDetails(int chamadoId, DataSourceCallback<Chamado> callback) {
-        apiService.getChamadoDetails(chamadoId).enqueue(new Callback<Chamado>() {
-            @Override
-            public void onResponse(Call<Chamado> call, Response<Chamado> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    callback.onSucesso(response.body());
-                } else {
-                    callback.onErro("Falha ao buscar detalhes do chamado.");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Chamado> call, Throwable t) {
-                callback.onErro("Falha na conexão: " + t.getMessage());
+                callback.onErro(t.getMessage());
             }
         });
     }
@@ -157,7 +113,7 @@ public class ChamadoRepository {
 
             @Override
             public void onFailure(Call<Chamado> call, Throwable t) {
-                callback.onErro("Falha na conexão: " + t.getMessage());
+                callback.onErro(t.getMessage());
             }
         });
     }
@@ -175,25 +131,45 @@ public class ChamadoRepository {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                callback.onErro("Falha na conexão: " + t.getMessage());
+                callback.onErro(t.getMessage());
             }
         });
     }
 
     public void getChat(int chamadoId, DataSourceCallback<List<Chat>> callback) {
-        apiService.getChat(chamadoId).enqueue(new Callback<List<Chat>>() {
+        apiService.getChat().enqueue(new Callback<ChatApiResponse>() {
             @Override
-            public void onResponse(Call<List<Chat>> call, Response<List<Chat>> response) {
+            public void onResponse(Call<ChatApiResponse> call, Response<ChatApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    callback.onSucesso(response.body());
+                    ChatApiResponse apiResponse = response.body();
+                    List<Chat> todosOsChats = apiResponse.getChats();
+
+                    if (todosOsChats != null) {
+                        Log.d(TAG, "Recebidos " + todosOsChats.size() + " chats no total da API.");
+                        for (int i = 0; i < Math.min(todosOsChats.size(), 3); i++) {
+                            Chat chat = todosOsChats.get(i);
+                            // CORREÇÃO: Usando o nome correto do método do modelo Chat
+                            Log.d(TAG, "Chat Exemplo " + i + ": ID=" + chat.getId() + ", ChamadoID=" + chat.getChamadoId() + ", Mensagem=" + chat.getMensagem());
+                        }
+
+                        List<Chat> chatsFiltrados = todosOsChats.stream()
+                                .filter(c -> c.getChamadoId() != null && c.getChamadoId() == chamadoId)
+                                .collect(Collectors.toList());
+                        
+                        Log.d(TAG, "Chats filtrados para o chamado " + chamadoId + ": " + chatsFiltrados.size() + " mensagens.");
+                        callback.onSucesso(chatsFiltrados);
+                    } else {
+                         callback.onErro("A lista de chats retornada pela API está nula.");
+                    }
+
                 } else {
                     Log.e(TAG, "Falha ao buscar chat. Código: " + response.code() + ", Mensagem: " + response.message());
-                    callback.onErro("Falha ao buscar chat." + response.errorBody());
+                    callback.onErro("Falha ao buscar chat.");
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Chat>> call, Throwable t) {
+            public void onFailure(Call<ChatApiResponse> call, Throwable t) {
                 callback.onErro("Falha na conexão: " + t.getMessage());
             }
         });
@@ -212,7 +188,7 @@ public class ChamadoRepository {
 
             @Override
             public void onFailure(Call<Chat> call, Throwable t) {
-                callback.onErro("Falha na conexão: " + t.getMessage());
+                callback.onErro(t.getMessage());
             }
         });
     }
